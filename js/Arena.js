@@ -4,7 +4,24 @@ Arena = function(game) {
     var scene = game.scene;
 
     // Création de notre lumière principale
-    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 20, 0), scene);
+    light.diffuse = new BABYLON.Color3(1, 1, 1);
+    light.specular = new BABYLON.Color3(1, 1, 1);
+
+    // Lumière directionnelle (ne fonctionne pas)
+    // var light1 = new BABYLON.DirectionalLight("Dir1", new BABYLON.Vector3(0, 1, 0), scene);
+    // light1.diffuse = new BABYLON.Color3(1, 1, 1);
+    // light1.specular = new BABYLON.Color3(1, 1, 1);
+
+    // Lumière ponctuelle
+    // var light1 = new BABYLON.PointLight("Omni1", new BABYLON.Vector3(1, 10, 1), scene);
+    // light1.diffuse = new BABYLON.Color3(1, 1, 1);
+    // light1.specular = new BABYLON.Color3(1, 1, 1);
+
+    // Spot
+    var light1 = new BABYLON.SpotLight("Spot1", new BABYLON.Vector3(0, 30, -10), new BABYLON.Vector3(0, -1, 0), 0.8, 2, scene);
+    light1.diffuse = new BABYLON.Color3(1, 1, 1);
+    light1.specular = new BABYLON.Color3(1, 1, 1);
 
     // Ajout d'un matériau: les murs
     var materialWall = new BABYLON.StandardMaterial("wallTexture", scene);
