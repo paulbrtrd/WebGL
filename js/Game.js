@@ -45,7 +45,9 @@ Game.prototype = {
     // Prototype d'initialisation de la scène
     _initScene: function(engine) {
         var scene = new BABYLON.Scene(engine);
-        scene.clearColor = new BABYLON.Color3(0, 0, 0);
+        scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.9);
+        scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+        scene.collisionsEnabled = true;
         scene.preventDefaultOnPointerDown = false;
         return scene;
     }

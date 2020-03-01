@@ -76,23 +76,19 @@ Weapons.prototype = {
 
     launchFire: function() {
         if (this.canFire) {
-            var renderWidth = this.Player.game.engine.getRenderWidth(true);
-            var renderHeight = this.Player.game.engine.getRenderHeight(true);
 
-            var direction = this.Player.game.scene.pick(renderWidth / 2, renderHeight / 2);
-            direction = direction.pickedPoint.subtractInPlace(this.Player.camera.position);
-            direction = direction.normalize();
-
-            this.createRocket(this.Player.camera, direction)
+            this.createRocket(this.Player.camera.playerBox)
             this.canFire = false;
         } else {
             // Nothing to do : cannot fire
         }
     },
-    createRocket: function(playerPosition, direction) {
+    createRocket: function(playerPosition) {
         var positionValue = this.rocketLauncher.absolutePosition.clone();
         var rotationValue = playerPosition.rotation;
-        var newRocket = BABYLON.Mesh.CreateBox("rocket", 1, this.Player.game.scene);
+        var Player = this.Player;
+        var newRocket = BABYLON.Mesh.CreateBox("rocket", 1, Player.game.scene);
+
         newRocket.direction = new BABYLON.Vector3(
             Math.sin(rotationValue.y) * Math.cos(rotationValue.x),
             Math.sin(-rotationValue.x),
@@ -108,9 +104,6 @@ Weapons.prototype = {
 
         newRocket.material = new BABYLON.StandardMaterial("textureWeapon", this.Player.game.scene);
         newRocket.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
-
-        // On donne accès à Player dans registerBeforeRender
-        var Player = this.Player;
 
         newRocket.registerAfterRender(function() {
             // On bouge la roquette vers l'avant
