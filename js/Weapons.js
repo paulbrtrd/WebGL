@@ -135,7 +135,7 @@ Weapons.prototype = {
                     explosionRadius.registerAfterRender(function() {
                         explosionRadius.material.alpha -= 0.02;
                         if (explosionRadius.material.alpha <= 0) {
-                            explosionRadius.dispose();
+                            // explosionRadius.dispose();
                         }
                     });
                 }
