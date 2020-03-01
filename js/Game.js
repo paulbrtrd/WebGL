@@ -2,6 +2,7 @@ Game = function(canvasId) {
     // Canvas et engine défini ici
     var canvas = document.getElementById(canvasId);
     var engine = new BABYLON.Engine(canvas, true);
+    this.engine = engine;
     var _this = this;
     _this.actualTime = Date.now();
 
@@ -23,6 +24,11 @@ Game = function(canvasId) {
         _player._checkMove((_this.fps) / 60);
 
         _this.scene.render();
+
+        // Si launchBullets est a true, on tire
+        if (_player.camera.weapons.launchBullets === true) {
+            _player.camera.weapons.launchFire();
+        }
     });
 
     // Ajuste la vue 3D si la fenetre est agrandi ou diminué
@@ -40,6 +46,7 @@ Game.prototype = {
     _initScene: function(engine) {
         var scene = new BABYLON.Scene(engine);
         scene.clearColor = new BABYLON.Color3(0, 0, 0);
+        scene.preventDefaultOnPointerDown = false;
         return scene;
     }
 };

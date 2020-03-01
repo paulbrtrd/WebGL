@@ -11,6 +11,9 @@ Player = function(game, canvas) {
     // Vitesse
     this.speed = 1;
 
+    // Si le tir est activée ou non
+    this.weponShoot = false;
+
     // Axe de mouvement X et Z
     this.axisMovement = [false, false, false, false];
 
@@ -61,6 +64,27 @@ Player = function(game, canvas) {
         }
     }, false);
 
+    // On récupère le canvas de la scène 
+    var canvas = document.getElementById("renderCanvas");
+    // var canvas = this.game.scene.getEngine().getRenderingCanvas();
+
+    // On affecte le clic et on vérifie qu'il est bien utilisé dans la scène (_this.controlEnabled)
+    canvas.addEventListener("mousedown", function(evt) {
+        console.debug("Mouseown");
+        if (_this.controlEnabled && !_this.weponShoot) {
+            _this.weponShoot = true;
+            _this.handleUserMouseDown();
+        }
+    }, false);
+
+    // On fait pareil quand l'utilisateur relache le clic de la souris
+    canvas.addEventListener("mouseup", function(evt) {
+        if (_this.controlEnabled && _this.weponShoot) {
+            _this.weponShoot = false;
+            _this.handleUserMouseUp();
+        }
+    }, false);
+
 
     // Initialisation de la caméra
     this._initCamera(this.game.scene, canvas);
@@ -87,9 +111,7 @@ Player.prototype = {
         // On demande à la caméra de regarder au point zéro de la scène
         this.camera.setTarget(BABYLON.Vector3.Zero());
 
-        // On affecte le mouvement de la caméra au canvas
-
-        //this.camera.attachControl(canvas, true);
+        this.camera.weapons = new Weapons(this);
     },
     _initPointerLock: function() {
         var _this = this;
@@ -144,7 +166,17 @@ Player.prototype = {
                 this.camera.position.y,
                 this.camera.position.z + Math.cos(this.camera.rotation.y + degToRad(-90)) * -relativeSpeed);
         }
-    }
+    },
 
+    handleUserMouseDown: function() {
+        if (this.isAlive === true) {
+            this.camera.weapons.fire();
+        }
+    },
 
+    handleUserMouseUp: function() {
+        if (this.isAlive === true) {
+            this.camera.weapons.stopFire();
+        }
+    },
 };
