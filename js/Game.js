@@ -17,6 +17,10 @@ Game = function(canvasId) {
     // On initie la scène avec une fonction associé à l'objet Game
     this.scene = this._initScene(engine);
 
+    // Ajout de l'armurerie
+    var armory = new Armory(this);
+    _this.armory = armory;
+
     // Création du personnage
     var _player = new Player(_this, canvas);
 
@@ -26,8 +30,11 @@ Game = function(canvasId) {
     // Player data
     this._PlayerData = _player;
 
-    // Les roquettes générées dans Player.js
+    // Les roquettes générées dans Weapons.js
     this._rockets = [];
+
+    // Les lasers générés dans Weapons.js
+    this._lasers = [];
 
     // Les explosions qui découlent des roquettes
     this._explosionRadius = [];
@@ -42,9 +49,12 @@ Game = function(canvasId) {
         // Checker le mouvement du joueur en lui envoyant le ratio de déplacement
         _player._checkMove((_this.fps) / 60);
 
-        // On apelle nos deux fonctions de calcul pour les roquettes
+        // On apelle nos deux fonctions de rendu pour les roquettes et celle du laser
         _this.renderRockets();
         _this.renderExplosionRadius();
+        _this.renderLaser();
+        // On calcule les animations des armes
+        _this.renderWeapons();
 
         _this.scene.render();
 
@@ -132,7 +142,36 @@ Game.prototype = {
                 this._explosionRadius.splice(i, 1);
             }
         }
-    }
+    },
+
+    renderLaser: function() {
+        if (this._lasers.length > 0) {
+            for (var i = 0; i < this._lasers.length; i++) {
+                this._lasers[i].edgesWidth -= 0.5;
+                if (this._lasers[i].edgesWidth <= 0) {
+                    this._lasers[i].dispose();
+                    this._lasers.splice(i, 1);
+                }
+            }
+        }
+    },
+
+    renderWeapons: function() {
+        if (this._PlayerData && this._PlayerData.camera.weapons.inventory) {
+            // On regarde toutes les armes dans inventory
+            var inventoryWeapons = this._PlayerData.camera.weapons.inventory;
+
+            for (var i = 0; i < inventoryWeapons.length; i++) {
+                // Si l'arme est active et n'est pas à la position haute (topPositionY)
+                if (inventoryWeapons[i].isActive && inventoryWeapons[i].position.y < this._PlayerData.camera.weapons.topPositionY) {
+                    inventoryWeapons[i].position.y += 0.1;
+                } else if (!inventoryWeapons[i].isActive && inventoryWeapons[i].position.y != this._PlayerData.camera.weapons.bottomPosition.y) {
+                    // Sinon, si l'arme est inactive et pas encore à la position basse
+                    inventoryWeapons[i].position.y -= 0.1;
+                }
+            }
+        }
+    },
 };
 
 // Page entièrement chargé, on lance le jeu
